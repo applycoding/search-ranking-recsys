@@ -1,0 +1,54 @@
+{
+  "config": {
+    "items": 1200,
+    "queries": 300,
+    "train": 210,
+    "test": 90,
+    "k": 100
+  },
+  "results": {
+    "bm25 retrieval": {
+      "ndcg@5": 0.8377536979054423,
+      "ndcg@10": 0.8368427264629624,
+      "mrr": 1.0,
+      "recall@50": 0.6897710853036326
+    },
+    "dense retrieval": {
+      "ndcg@5": 0.8104754053705471,
+      "ndcg@10": 0.7893375579034188,
+      "mrr": 0.9944444444444445,
+      "recall@50": 0.6674158542094436
+    },
+    "hybrid retrieval": {
+      "ndcg@5": 0.8237852096965379,
+      "ndcg@10": 0.8088945041087034,
+      "mrr": 1.0,
+      "recall@50": 0.6805438324167354
+    },
+    "hybrid + logistic regression": {
+      "ndcg@5": 0.9135356456766272,
+      "ndcg@10": 0.8910306118245077,
+      "mrr": 1.0,
+      "recall@50": 0.7468371311018834
+    },
+    "hybrid + LightGBM LambdaMART": {
+      "ndcg@5": 0.9875101707815568,
+      "ndcg@10": 0.9858005547157244,
+      "mrr": 1.0,
+      "recall@50": 0.7856538436618584
+    }
+  },
+  "feature_importance": {
+    "bm25": 1445,
+    "bm25_rank_inv": 757,
+    "rating": 630,
+    "dense": 621,
+    "rrf": 471,
+    "title_coverage": 434,
+    "log_price": 392,
+    "log_popularity": 386,
+    "dense_rank_inv": 370,
+    "title_overlap": 314,
+    "query_len": 180
+  }
+}

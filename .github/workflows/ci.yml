@@ -1,0 +1,41 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q
+      - name: Offline evaluation and A/B simulation
+        run: |
+          python -m recsys.evaluate --out ci-reports
+          python -m recsys.ab_sim --sessions 10000 --out ci-reports
+          cat ci-reports/offline_eval.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.12'
+        with:
+          name: eval-reports
+          path: ci-reports
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t search-ranking-recsys .
+      - name: Smoke test
+        run: |
+          docker run -d -p 8000:8000 search-ranking-recsys
+          for i in $(seq 1 30); do curl -fs localhost:8000/health && break; sleep 1; done
+          curl -fs "localhost:8000/search?q=waterproof+trail+running+shoes&k=3"
